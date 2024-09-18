@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Register</h1>
+    <form method="POST" action="{{ url_for('main.register') }}">
+        {{ form.hidden_tag() }} <!-- Includes CSRF token and other hidden fields -->
+        
+        <label for="email">{{ form.email.label }}</label>
+        {{ form.email() }} <!-- Renders the email input field -->
+        {% for error in form.email.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
+        <br>
+
+        <label for="username">{{ form.username.label }}</label>
+        {{ form.username() }} <!-- Renders the username input field -->
+        {% for error in form.username.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
+        <br>
+
+        <label for="password">{{ form.password.label }}</label>
+        {{ form.password() }} <!-- Renders the password input field -->
+        {% for error in form.password.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
+        <br>
+
+        <label for="confirm_password">{{ form.confirm_password.label }}</label>
+        {{ form.confirm_password() }} <!-- Renders the confirm password input field -->
+        {% for error in form.confirm_password.errors %}
+            <span class="error">{{ error }}</span>
+        {% endfor %}
+        <br>
+
+        <button type="submit">Register</button>
+    </form>    
+    <p>Already have an account? <a href="{{ url_for('main.login') }}">Login</a></p>
+</body>
+</html>

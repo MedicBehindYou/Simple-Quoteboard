@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="header">
+        <div class="header-buttons">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.logout') }}" class="btn">Logout</a>
+            {% else %}
+                <a href="{{ url_for('main.login') }}" class="btn">Login</a>
+                {% if user_count < 10 %}
+                    <a href="{{ url_for('main.register') }}" class="btn">Register</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <h1>Hammond's HR Nightmare Inducing Quoteboard</h1>
+        
+        {% if current_user.is_authenticated %}
+            {% if quotes %}
+                <ul>
+                {% for quote in quotes %}
+                    <li class="quote-box">
+                        <p class="quote-content">{{ quote.content }}</p>
+                        <p class="quote-attribution">- {{ quote.attribution }}</p>
+                        <p class="quote-user">Submitted by: {{ quote.user.username }}</p> 
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No quotes available.</p>
+            {% endif %}
+            
+            <form method="POST" action="{{ url_for('main.submit_quote') }}">
+                <label for="content">Quote:</label>
+                <textarea id="content" name="content" required maxlength="512"></textarea>
+                <br>
+                <label for="attribution">Attributed to:</label>
+                <input type="text" id="attribution" name="attribution" required>
+                <br>
+                <button type="submit">Submit Quote</button>
+            </form>        
+        {% else %}
+            <p>Please <a href="{{ url_for('main.login') }}">log in</a> to view or submit quotes.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
