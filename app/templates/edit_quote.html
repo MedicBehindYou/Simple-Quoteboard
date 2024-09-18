@@ -1,0 +1,22 @@
+<!-- templates/edit_quote.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Quote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Edit Quote</h1>
+    <form method="POST">
+        <label for="content">Quote:</label>
+        <textarea id="content" name="content">{{ quote.content }}</textarea>
+        <br>
+        <label for="attribution">Attributed to:</label>
+        <input type="text" id="attribution" name="attribution" value="{{ quote.attribution }}">
+        <br>
+        <button type="submit">Update Quote</button>
+    </form>
+</body>
+</html>
