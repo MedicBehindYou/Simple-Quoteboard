@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import login_user, logout_user, current_user, login_required
 from app import db, login_manager
 from app.models import User, Quote
 from app.forms import RegistrationForm
+from functools import wraps
+
 
 bp = Blueprint('main', __name__)  # Create a blueprint
 
@@ -83,3 +85,52 @@ def profile():
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_admin:
+            abort(403)  # Forbidden
+        return f(*args, **kwargs)
+    return decorated_function
+
+@bp.route('/admin')
+@login_required
+@admin_required
+def admin_panel():
+    users = User.query.all()
+    quotes = Quote.query.all()
+    return render_template('admin.html', users=users, quotes=quotes)
+
+@bp.route('/admin/quotes/edit/<int:quote_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_quote(quote_id):
+    quote = Quote.query.get_or_404(quote_id)
+    if request.method == 'POST':
+        quote.content = request.form['content']
+        quote.attribution = request.form['attribution']
+        db.session.commit()
+        flash('Quote updated successfully!')
+        return redirect(url_for('main.admin_panel'))
+    return render_template('edit_quote.html', quote=quote)
+
+@bp.route('/admin/quotes/delete/<int:quote_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_quote(quote_id):
+    quote = Quote.query.get_or_404(quote_id)
+    db.session.delete(quote)
+    db.session.commit()
+    flash('Quote deleted successfully!')
+    return redirect(url_for('main.admin_panel'))
+
+@bp.route('/admin/users/make_admin/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def make_admin(user_id):
+    user = User.query.get_or_404(user_id)
+    user.is_admin = True
+    db.session.commit()
+    flash(f'User {user.username} is now an admin.')
+    return redirect(url_for('main.admin_panel'))
