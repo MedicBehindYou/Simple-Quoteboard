@@ -1,5 +1,4 @@
-/* Existing styles */
-
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -34,16 +33,7 @@ label {
     font-weight: bold; 
 }
 
-textarea {
-    width: 100%;
-    height: 100px;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
-}
-
-input[type="text"] {
+textarea, input[type="text"] {
     width: 100%;
     padding: 10px;
     border-radius: 4px;
@@ -57,19 +47,96 @@ form {
     margin: 0 auto;   /* Center the form on the page */
 }
 
-button {
-    display: block; 
-    margin-top: 10px; 
-    padding: 10px 20px; 
-    border: none; 
-    border-radius: 4px; 
-    background-color: #007bff; 
-    color: white; 
-    cursor: pointer; 
+/* Unified Button Styles */
+button, .btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    text-decoration: none;
+    box-sizing: border-box;
+    height: 40px; /* Set a fixed height to ensure consistency */
 }
 
-button:hover {
+button:hover, .btn:hover {
     background-color: #0056b3;
+}
+
+button:focus, .btn:focus {
+    outline: none; /* Remove default focus outline */
+}
+
+/* Header Styles */
+.header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    z-index: 1000; /* Ensure the header stays above other content */
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Align buttons left and right */
+}
+
+.header-buttons {
+    display: flex;
+    align-items: center; /* Align items vertically center */
+}
+
+.header .btn {
+    margin-left: 10px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Black with opacity */
+    border-radius: 5px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    border-radius: 7px;
+}
+
+.modal textarea {
+    margin-bottom: 10px; /* Add space below the textarea */
+}
+
+.modal input[type="text"] {
+    margin-bottom: 10px; /* Add space below the text input */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .quote-box {
@@ -109,40 +176,4 @@ button:hover {
     word-wrap: break-word; /* Break long words and wrap text */
     overflow-wrap: break-word; /* Ensure that long words break correctly */
     max-width: calc(100% - 20px); /* Prevent overflow and adjust width */
-}
-
-/* Header Styles */
-.header {
-    position: fixed;
-    top: 0;
-    right: 0;
-    padding: 10px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #ddd;
-    z-index: 1000; /* Ensure the header stays above other content */
-    width: 100%;
-}
-
-.quote-box::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-.header-buttons {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.header .btn {
-    margin-left: 10px;
-    padding: 10px 15px;
-    background: #007bff;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-}
-
-.header .btn:hover {
-    background: #0056b3;
 }

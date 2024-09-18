@@ -8,6 +8,11 @@
 </head>
 <body>
     <div class="header">
+        <div>
+            {% if current_user.is_authenticated %}
+                <button id="openModalBtn" class="btn">Create Quote</button> <!-- Button to open modal -->
+            {% endif %}
+        </div>
         <div class="header-buttons">
             {% if current_user.is_authenticated %}
                 <a href="{{ url_for('main.logout') }}" class="btn">Logout</a>
@@ -37,7 +42,16 @@
             {% else %}
                 <p>No quotes available.</p>
             {% endif %}
-            
+        {% else %}
+            <p>Please <a href="{{ url_for('main.login') }}">log in</a> to view or submit quotes.</p>
+        {% endif %}
+    </div>
+
+    <!-- Modal structure for quote submission form -->
+    <div id="quoteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span> <!-- Close button -->
+            <h2>Submit a Quote</h2>
             <form method="POST" action="{{ url_for('main.submit_quote') }}">
                 <label for="content">Quote:</label>
                 <textarea id="content" name="content" required maxlength="512"></textarea>
@@ -46,10 +60,32 @@
                 <input type="text" id="attribution" name="attribution" required>
                 <br>
                 <button type="submit">Submit Quote</button>
-            </form>        
-        {% else %}
-            <p>Please <a href="{{ url_for('main.login') }}">log in</a> to view or submit quotes.</p>
-        {% endif %}
+            </form>  
+        </div>
     </div>
+
+    <script>
+        // JavaScript to handle modal pop-up
+        const modal = document.getElementById('quoteModal');
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementsByClassName('close')[0];
+
+        // Open modal on button click
+        openModalBtn.onclick = function() {
+            modal.style.display = 'block';
+        }
+
+        // Close modal on (x) click
+        closeModalBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        // Close modal if user clicks outside the modal
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
