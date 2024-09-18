@@ -1,2 +1,3 @@
 instance/
 setup.sh
+app/__pycache__/
