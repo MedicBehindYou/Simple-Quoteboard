@@ -2,3 +2,4 @@ instance/
 setup.sh
 app/__pycache__/
 __pycache__/
+migrations/
