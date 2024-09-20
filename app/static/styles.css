@@ -170,10 +170,38 @@ button:focus, .btn:focus {
 .quote-user {
     font-size: 0.9em;
     color: #666;
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    word-wrap: break-word; /* Break long words and wrap text */
-    overflow-wrap: break-word; /* Ensure that long words break correctly */
-    max-width: calc(100% - 20px); /* Prevent overflow and adjust width */
+    text-align: right; /* Align text to the right */
+    margin-top: 5px; /* Add space above the user text */
+    margin-bottom: 10px; /* Add space below for better spacing */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: calc(100% - 20px);
+}
+
+
+.vote-section {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    align-items: center;
+    margin-top: 5px; /* Space above the buttons */
+    margin-bottom: 20px; /* Space between buttons and submitted by */
+}
+
+.vote-btn {
+    padding: 5px;
+    border: none;
+    background: transparent; /* Transparent background */
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.vote-btn:hover {
+    color: #007bff; /* Change color on hover */
+}
+
+.vote-count {
+    margin: 0 10px; /* Space between upvote and downvote counts */
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
 }
