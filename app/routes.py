@@ -1,7 +1,8 @@
+#routes.py
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import login_user, logout_user, current_user, login_required
 from app import db, login_manager
-from app.models import User, Quote
+from app.models import User, Quote, Vote
 from app.forms import RegistrationForm
 from functools import wraps
 
@@ -134,3 +135,61 @@ def make_admin(user_id):
     db.session.commit()
     flash(f'User {user.username} is now an admin.')
     return redirect(url_for('main.admin_panel'))
+
+# routes.py
+
+@bp.route('/quote/<int:quote_id>/upvote', methods=['POST'])
+@login_required
+def upvote(quote_id):
+    quote = Quote.query.get_or_404(quote_id)
+    
+    # Check if user has already voted on this quote
+    existing_vote = Vote.query.filter_by(user_id=current_user.id, quote_id=quote_id).first()
+    
+    if existing_vote:
+        if existing_vote.vote_type == 'upvote':
+            flash('You have already upvoted this quote!', 'warning')
+        else:
+            # Change downvote to upvote
+            existing_vote.vote_type = 'upvote'
+            quote.upvotes += 1
+            quote.downvotes -= 1
+            db.session.commit()
+            flash('Changed your vote to upvote!', 'success')
+    else:
+        # Create a new upvote
+        vote = Vote(user_id=current_user.id, quote_id=quote_id, vote_type='upvote')
+        quote.upvotes += 1
+        db.session.add(vote)
+        db.session.commit()
+        flash('You upvoted the quote!', 'success')
+    
+    return redirect(url_for('main.home'))
+
+@bp.route('/quote/<int:quote_id>/downvote', methods=['POST'])
+@login_required
+def downvote(quote_id):
+    quote = Quote.query.get_or_404(quote_id)
+    
+    # Check if user has already voted on this quote
+    existing_vote = Vote.query.filter_by(user_id=current_user.id, quote_id=quote_id).first()
+    
+    if existing_vote:
+        if existing_vote.vote_type == 'downvote':
+            flash('You have already downvoted this quote!', 'warning')
+        else:
+            # Change upvote to downvote
+            existing_vote.vote_type = 'downvote'
+            quote.downvotes += 1
+            quote.upvotes -= 1
+            db.session.commit()
+            flash('Changed your vote to downvote!', 'success')
+    else:
+        # Create a new downvote
+        vote = Vote(user_id=current_user.id, quote_id=quote_id, vote_type='downvote')
+        quote.downvotes += 1
+        db.session.add(vote)
+        db.session.commit()
+        flash('You downvoted the quote!', 'success')
+    
+    return redirect(url_for('main.home'))
