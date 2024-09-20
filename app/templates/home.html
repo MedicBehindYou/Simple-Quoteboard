@@ -1,3 +1,4 @@
+<!--home.html-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,13 +35,27 @@
         {% if current_user.is_authenticated %}
             {% if quotes %}
                 <ul>
-                {% for quote in quotes|reverse %}
-                    <li class="quote-box">
-                        <p class="quote-content">{{ quote.content }}</p>
-                        <p class="quote-attribution">- {{ quote.attribution }}</p>
-                        <p class="quote-user">Submitted by: {{ quote.user.username }}</p> 
-                    </li>
-                {% endfor %}
+                    {% for quote in quotes|reverse %}
+                        <li class="quote-box">
+                            <p class="quote-content">{{ quote.content }}</p>
+                            <p class="quote-attribution">- {{ quote.attribution }}</p>
+                            <p class="quote-user">Submitted by: {{ quote.user.username }}</p>
+                            
+                            <!-- Check if user has voted on this quote -->
+                            {% set user_vote = quote.votes|selectattr("user_id", "equalto", current_user.id)|first %}
+                            
+                            <form method="POST" action="{{ url_for('main.upvote', quote_id=quote.id) }}">
+                                <button type="submit" {% if user_vote and user_vote.vote_type == 'upvote' %} disabled {% endif %}>
+                                    👍 Upvote ({{ quote.upvotes }})
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('main.downvote', quote_id=quote.id) }}">
+                                <button type="submit" {% if user_vote and user_vote.vote_type == 'downvote' %} disabled {% endif %}>
+                                    👎 Downvote ({{ quote.downvotes }})
+                                </button>
+                            </form>
+                        </li>
+                    {% endfor %}
                 </ul>
             {% else %}
                 <p>No quotes available.</p>
