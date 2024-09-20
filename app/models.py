@@ -17,8 +17,6 @@ class User(db.Model, UserMixin):
         return bcrypt.check_password_hash(self.password, password)
 
 
-
-
 class Quote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(512), nullable=False)
@@ -26,4 +24,17 @@ class Quote(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
+    upvotes = db.Column(db.Integer, default=0)
+    downvotes = db.Column(db.Integer, default=0)
+
     user = db.relationship('User', backref='quotes')  # Relationship to fetch username
+
+
+class Vote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    quote_id = db.Column(db.Integer, db.ForeignKey('quote.id'), nullable=False)
+    vote_type = db.Column(db.String(10), nullable=False)  # 'upvote' or 'downvote'
+    
+    user = db.relationship('User', backref='votes')
+    quote = db.relationship('Quote', backref='votes')
