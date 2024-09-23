@@ -17,7 +17,7 @@ def home():
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
-    if User.query.count() >= 10:
+    if User.query.count() >= 12:
         flash('Registration limit reached. Cannot register more users.', 'warning')
         return redirect(url_for('main.home'))
 
@@ -188,16 +188,33 @@ def downvote(quote_id):
 @login_required
 def vote(vote_type, quote_id):
     quote = Quote.query.get_or_404(quote_id)
-    
-    # Add or subtract votes based on the type
-    if vote_type == 'upvote':
-        quote.upvotes += 1
-    elif vote_type == 'downvote':
-        quote.downvotes += 1
-    
+    existing_vote = Vote.query.filter_by(user_id=current_user.id, quote_id=quote_id).first()
+
+    if existing_vote:
+        if existing_vote.vote_type == vote_type:
+            # User already voted this way, prevent further voting
+            return jsonify({'status': f'already_{vote_type}d'}), 400
+        else:
+            # Change vote type (e.g., upvote to downvote or vice versa)
+            if existing_vote.vote_type == 'upvote' and vote_type == 'downvote':
+                quote.upvotes -= 1
+                quote.downvotes += 1
+            elif existing_vote.vote_type == 'downvote' and vote_type == 'upvote':
+                quote.downvotes -= 1
+                quote.upvotes += 1
+            existing_vote.vote_type = vote_type
+    else:
+        # New vote
+        if vote_type == 'upvote':
+            quote.upvotes += 1
+        elif vote_type == 'downvote':
+            quote.downvotes += 1
+
+        vote = Vote(user_id=current_user.id, quote_id=quote_id, vote_type=vote_type)
+        db.session.add(vote)
+
     db.session.commit()
-    
+
     # Return the updated vote count
     new_vote_count = quote.upvotes - quote.downvotes
-    
     return jsonify(success=True, new_vote_count=new_vote_count)
