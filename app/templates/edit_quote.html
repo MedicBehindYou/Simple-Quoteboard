@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1>Edit Quote</h1>
-    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> method="POST">
         <label for="content">Quote:</label>
         <textarea id="content" name="content">{{ quote.content }}</textarea>
         <br>
