@@ -22,7 +22,7 @@
                 {% endif %}
             {% else %}
                 <a href="{{ url_for('main.login') }}" class="btn">Login</a>
-                {% if user_count < 10 %}
+                {% if user_count < 12 %}
                     <a href="{{ url_for('main.register') }}" class="btn">Register</a>
                 {% endif %}
             {% endif %}
@@ -34,29 +34,28 @@
         
         {% if current_user.is_authenticated %}
             {% if quotes %}
-                <!-- home.html -->
-                <ul>
-                    {% for quote in quotes|reverse %}
-                        <li class="quote-box">
-                            <p class="quote-content">{{ quote.content }}</p>
-                            <p class="quote-attribution">- {{ quote.attribution }}</p>
-                
-                            <!-- Voting section aligned to the right -->
+            <ul>
+                {% for quote in quotes|reverse %}
+                    <li class="quote-box">
+                        <div class="quote-content">{{ quote.content }}</div>
+                        <div class="quote-right">
+                            <!-- Voting section at the top -->
                             <div class="vote-section">
-                                <button class="vote-btn" id="upvote-btn-{{ quote.id }}" onclick="vote('upvote', {{ quote.id }})">
-                                    👍
-                                </button>
+                                <button class="vote-btn" id="upvote-btn-{{ quote.id }}" onclick="vote('upvote', {{ quote.id }})">👍</button>
                                 <span class="vote-count" id="vote-count-{{ quote.id }}">{{ quote.upvotes - quote.downvotes }}</span>
-                                <button class="vote-btn" id="downvote-btn-{{ quote.id }}" onclick="vote('downvote', {{ quote.id }})">
-                                    👎
-                                </button>
+                                <button class="vote-btn" id="downvote-btn-{{ quote.id }}" onclick="vote('downvote', {{ quote.id }})">👎</button>
                             </div>
-                
+                            
+                            <!-- Submitted by in the middle -->
                             <p class="quote-user">Submitted by: {{ quote.user.username }}</p>
-                        </li>
-                    {% endfor %}
-                </ul>
-                
+                            
+                            <!-- Attribution at the bottom -->
+                            <p class="quote-attribution">- {{ quote.attribution }}</p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+                     
                 <script>
                     function vote(voteType, quoteId) {
                         // Send AJAX request to the vote route
@@ -93,6 +92,7 @@
             <span class="close">&times;</span> <!-- Close button -->
             <h2>Submit a Quote</h2>
             <form method="POST" action="{{ url_for('main.submit_quote') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <label for="content">Quote:</label>
                 <textarea id="content" name="content" required maxlength="512"></textarea>
                 <br>
