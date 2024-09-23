@@ -142,27 +142,39 @@ button:focus, .btn:focus {
 .quote-box {
     border: 1px solid #ddd;
     border-radius: 5px;
-    padding: 15px; /* Increased padding to avoid overlap */
+    padding: 15px;
     margin-bottom: 10px;
-    position: relative;
-    word-wrap: break-word; /* Break long words and wrap text */
-    overflow-wrap: break-word; /* Ensure that long words break correctly */
-    max-width: 100%; /* Ensure the box does not exceed the viewport width */
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center; /* Align quote content in the center vertically */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 
 .quote-content {
     font-size: 1.2em;
-    margin-bottom: 5px; /* Reduced bottom margin to accommodate other elements */
-    word-wrap: break-word; /* Break long words and wrap text */
-    overflow-wrap: break-word; /* Ensure that long words break correctly */
+    flex: 1; /* Take up all available space on the left */
+    margin-right: 15px; /* Add space between the quote and right side */
+    text-align: left;
+}
+
+.quote-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align all items to the right */
+    justify-content: space-between; /* Spread items vertically */
+}
+
+.quote-attribution, .quote-user, .vote-section {
+    margin-bottom: 10px; /* Space between stacked elements */
+    text-align: right; /* Ensure right alignment */
 }
 
 .quote-attribution {
     font-size: 1em;
     font-style: italic;
-    margin-bottom: 25px; /* Increased margin-bottom to create space for user attribution */
+    margin-right: 25px; /* Increased margin-bottom to create space for user attribution */
     word-wrap: break-word; /* Break long words and wrap text */
     overflow-wrap: break-word; /* Ensure that long words break correctly */
 }
@@ -173,6 +185,7 @@ button:focus, .btn:focus {
     text-align: right; /* Align text to the right */
     margin-top: 5px; /* Add space above the user text */
     margin-bottom: 10px; /* Add space below for better spacing */
+    margin-right: 10px;
     word-wrap: break-word;
     overflow-wrap: break-word;
     max-width: calc(100% - 20px);
@@ -183,8 +196,7 @@ button:focus, .btn:focus {
     display: flex;
     justify-content: flex-end; /* Align buttons to the right */
     align-items: center;
-    margin-top: 5px; /* Space above the buttons */
-    margin-bottom: 20px; /* Space between buttons and submitted by */
+    margin-bottom: 10px;
 }
 
 .vote-btn {
