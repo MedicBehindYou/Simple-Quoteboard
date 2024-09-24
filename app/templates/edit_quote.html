@@ -6,10 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Quote</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
     <h1>Edit Quote</h1>
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> method="POST">
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label for="content">Quote:</label>
         <textarea id="content" name="content">{{ quote.content }}</textarea>
         <br>
