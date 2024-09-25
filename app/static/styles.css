@@ -217,3 +217,23 @@ button:focus, .btn:focus {
     font-weight: bold;
     color: #333;
 }
+
+.sort-filter-controls {
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+}
+
+.sort-filter-controls label {
+    margin-right: 10px;
+}
+
+.sort-filter-controls select,
+.sort-filter-controls input {
+    margin-right: 20px;
+    padding: 5px;
+}
+
+.sort-filter-controls button {
+    padding: 5px 10px;
+}

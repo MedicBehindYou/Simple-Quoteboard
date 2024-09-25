@@ -23,7 +23,7 @@
                 {% endif %}
             {% else %}
                 <a href="{{ url_for('main.login') }}" class="btn">Login</a>
-                {% if user_count < 12 %}
+                {% if user_count < 13 %}
                     <a href="{{ url_for('main.register') }}" class="btn">Register</a>
                 {% endif %}
             {% endif %}
@@ -34,29 +34,63 @@
         <h1>Hammond's HR Nightmare Inducing Quoteboard</h1>
         
         {% if current_user.is_authenticated %}
+            <div class="sort-filter-controls">
+                <form id="sortFilterForm" method="GET" action="{{ url_for('main.home') }}">
+                    <!-- Sort dropdown -->
+                    <label for="sort_by">Sort by:</label>
+                    <select name="sort_by" id="sort_by" onchange="document.getElementById('sortFilterForm').submit()">
+                        <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest to Oldest</option>
+                        <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Oldest to Newest</option>
+                        <option value="upvotes" {% if sort_by == 'upvotes' %}selected{% endif %}>Highest Upvotes</option>
+                    </select>
+            
+                    <!-- Filter by Attribution -->
+                    <label for="attribution_filter">Filter by Attribution:</label>
+                    <input type="text" name="attribution_filter" id="attribution_filter" placeholder="Attribution" value="{{ attribution_filter }}">
+                    <button type="submit">Filter</button>
+                </form>
+            </div>
+            
             {% if quotes %}
-            <ul>
+            <ul id="quote-list">
                 {% for quote in quotes|reverse %}
                     <li class="quote-box">
                         <div class="quote-content">{{ quote.content }}</div>
                         <div class="quote-right">
-                            <!-- Voting section at the top -->
                             <div class="vote-section">
                                 <button class="vote-btn" id="upvote-btn-{{ quote.id }}" onclick="vote('upvote', {{ quote.id }})">👍</button>
                                 <span class="vote-count" id="vote-count-{{ quote.id }}">{{ quote.upvotes - quote.downvotes }}</span>
                                 <button class="vote-btn" id="downvote-btn-{{ quote.id }}" onclick="vote('downvote', {{ quote.id }})">👎</button>
                             </div>
-                            
-                            <!-- Submitted by in the middle -->
                             <p class="quote-user">Submitted by: {{ quote.user.username }}</p>
-                            
-                            <!-- Attribution at the bottom -->
                             <p class="quote-attribution">- {{ quote.attribution }}</p>
                         </div>
                     </li>
                 {% endfor %}
             </ul>
-                     
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+                <script type="text/javascript">
+                    var socket = io();
+                
+                    socket.on('new_quote', function(data) {
+                        const quoteList = document.getElementById('quote-list');
+                        const newQuote = `
+                            <li class="quote-box">
+                                <div class="quote-content">${data.content}</div> <!-- Use data.content -->
+                                <div class="quote-right">
+                                    <div class="vote-section">
+                                        <button class="vote-btn" id="upvote-btn-${data.id}" onclick="vote('upvote', ${data.id})">👍</button>
+                                        <span class="vote-count" id="vote-count-${data.id}">${data.upvotes - data.downvotes}</span>
+                                        <button class="vote-btn" id="downvote-btn-${data.id}" onclick="vote('downvote', ${data.id})">👎</button>
+                                    </div>
+                                    <p class="quote-user">Submitted by: ${data.username}</p> <!-- Use data.username -->
+                                    <p class="quote-attribution">- ${data.attribution}</p> <!-- Use data.attribution -->
+                                </div>
+                            </li>
+                        `;
+                        quoteList.insertAdjacentHTML('afterbegin', newQuote);  // Adds the new quote at the top
+                    });
+                </script>
                 <script>
                     function vote(voteType, quoteId) {
                         // Send AJAX request to the vote route
@@ -78,7 +112,7 @@
                         .catch(error => console.error('Error:', error));
                     }
                     </script>
-                    
+
             {% else %}
                 <p>No quotes available.</p>
             {% endif %}
@@ -87,15 +121,14 @@
         {% endif %}
     </div>
 
-    <!-- Modal structure for quote submission form -->
     <div id="quoteModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span> <!-- Close button -->
+            <span class="close">&times;</span> 
             <h2>Submit a Quote</h2>
             <form method="POST" action="{{ url_for('main.submit_quote') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <label for="content">Quote:</label>
-                <textarea id="content" name="content" required maxlength="512"></textarea>
+                <textarea id="content" name="content" required maxlength="512" spellcheck="true"></textarea>
                 <br>
                 <label for="attribution">Attributed to:</label>
                 <input type="text" id="attribution" name="attribution" required>

@@ -1,23 +1,44 @@
 #routes.py
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
-from app import db, login_manager
+from app import db, login_manager, socketio
 from app.models import User, Quote, Vote
 from app.forms import RegistrationForm
 from functools import wraps
+from flask_socketio import emit
 
 
 bp = Blueprint('main', __name__)  # Create a blueprint
 
 @bp.route('/')
 def home():
-    quotes = Quote.query.all()
+    sort_by = request.args.get('sort_by', 'newest')
+    attribution_filter = request.args.get('attribution_filter', '')
+
+    # Query for quotes
+    quotes_query = Quote.query
+
+    # Apply attribution filter if provided
+    if attribution_filter:
+        quotes_query = quotes_query.filter(Quote.attribution.ilike(f"%{attribution_filter}%"))
+
+    # Apply sorting logic
+    if sort_by == 'newest':
+        quotes_query = quotes_query.order_by(Quote.created_at.asc())
+    elif sort_by == 'oldest':
+        quotes_query = quotes_query.order_by(Quote.created_at.desc())
+    elif sort_by == 'upvotes':
+        quotes_query = quotes_query.order_by((Quote.upvotes - Quote.downvotes).asc())
+
+    quotes = quotes_query.all()
     user_count = User.query.count()
-    return render_template('home.html', quotes=quotes, user_count=user_count)
+
+    return render_template('home.html', quotes=quotes, user_count=user_count, sort_by=sort_by, attribution_filter=attribution_filter)
+
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
-    if User.query.count() >= 12:
+    if User.query.count() >= 13:
         flash('Registration limit reached. Cannot register more users.', 'warning')
         return redirect(url_for('main.home'))
 
@@ -75,7 +96,19 @@ def submit_quote():
     quote = Quote(content=content, attribution=attribution, user_id=current_user.id)
     db.session.add(quote)
     db.session.commit()
+
+    socketio.emit('new_quote', {
+        'id': quote.id,
+        'content': quote.content,  
+        'username': quote.user.username,  
+        'attribution': quote.attribution,
+        'upvotes': quote.upvotes,
+        'downvotes': quote.downvotes
+    }, namespace='/')
+
+
     return redirect(url_for('main.home'))
+
 
 @bp.route('/profile')
 @login_required
