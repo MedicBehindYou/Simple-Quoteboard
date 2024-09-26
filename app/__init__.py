@@ -12,7 +12,7 @@ db = SQLAlchemy()
 bcrypt = Bcrypt()
 migrate = Migrate()
 csrf = CSRFProtect()
-socketio = SocketIO()
+socketio = SocketIO(cors_allowed_origins="https://quoteboard.work", async_mode="gevent")
 login_manager = LoginManager()
 login_manager.login_view = 'main.login' 
 
@@ -29,7 +29,7 @@ def create_app():
     migrate.init_app(app, db)
     csrf.init_app(app)
     CORS(app, resources={r"/*": {"origins": "https://quoteboard.work"}})
-    socketio.init_app(app, cors_allowed_origins="https://quoteboard.work")
+    socketio.init_app(app)
 
     from app.routes import bp as main_bp
     app.register_blueprint(main_bp)
