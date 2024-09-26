@@ -237,3 +237,47 @@ button:focus, .btn:focus {
 .sort-filter-controls button {
     padding: 5px 10px;
 }
+
+/* Leaderboard Styles */
+.leaderboard-container {
+    max-width: 600px;
+    margin: 0 auto; /* Center the container */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Slight shadow for better visual separation */
+}
+
+.leaderboard-title {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.leaderboard-list {
+    list-style-type: decimal;
+    padding-left: 20px;
+}
+
+.leaderboard-list li {
+    font-size: 1.5rem;
+    background: #f9f9f9;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Add shadow to each list item */
+}
+
+.leaderboard-name {
+    font-weight: bold;
+}
+
+.leaderboard-count {
+    font-size: 1.2rem;
+    color: #007bff;
+}

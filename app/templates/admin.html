@@ -17,6 +17,7 @@
             <li>{{ user.username }} - {{ 'Admin' if user.is_admin else 'Regular User' }}
                 {% if not user.is_admin %}
                     <form method="POST" action="{{ url_for('main.make_admin', user_id=user.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit">Make Admin</button>
                     </form>
                 {% endif %}
@@ -32,6 +33,7 @@
                 <p>- {{ quote.attribution }}</p>
                 <a href="{{ url_for('main.edit_quote', quote_id=quote.id) }}">Edit</a>
                 <form method="POST" action="{{ url_for('main.delete_quote', quote_id=quote.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit">Delete</button>
                 </form>
             </li>

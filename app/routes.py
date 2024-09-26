@@ -225,10 +225,8 @@ def vote(vote_type, quote_id):
 
     if existing_vote:
         if existing_vote.vote_type == vote_type:
-            # User already voted this way, prevent further voting
             return jsonify({'status': f'already_{vote_type}d'}), 400
         else:
-            # Change vote type (e.g., upvote to downvote or vice versa)
             if existing_vote.vote_type == 'upvote' and vote_type == 'downvote':
                 quote.upvotes -= 1
                 quote.downvotes += 1
@@ -237,7 +235,6 @@ def vote(vote_type, quote_id):
                 quote.upvotes += 1
             existing_vote.vote_type = vote_type
     else:
-        # New vote
         if vote_type == 'upvote':
             quote.upvotes += 1
         elif vote_type == 'downvote':
@@ -248,6 +245,25 @@ def vote(vote_type, quote_id):
 
     db.session.commit()
 
-    # Return the updated vote count
     new_vote_count = quote.upvotes - quote.downvotes
     return jsonify(success=True, new_vote_count=new_vote_count)
+
+@bp.route('/leaderboard')
+def leaderboard():
+    names = ['nathan', 'rick', 'dean', 'anthony', 'brian', 'ryan', 'scott', 'kayla', 'eben', 'darren']
+    
+    leaderboard = {name: 0 for name in names}
+    
+    quotes = Quote.query.all()
+
+    for quote in quotes:
+        attribution = quote.attribution.lower()  
+        for name in names:
+            if name in attribution:
+                leaderboard[name] += 1 
+    
+    sorted_leaderboard = sorted(leaderboard.items(), key=lambda x: x[1], reverse=True)
+    
+    top_10_leaderboard = sorted_leaderboard[:10]
+
+    return render_template('leaderboard.html', leaderboard=top_10_leaderboard)
