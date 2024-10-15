@@ -38,7 +38,7 @@ def home():
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
-    if User.query.count() >= 13:
+    if User.query.count() >= 14:
         flash('Registration limit reached. Cannot register more users.', 'warning')
         return redirect(url_for('main.home'))
 
@@ -267,3 +267,27 @@ def leaderboard():
     top_10_leaderboard = sorted_leaderboard[:10]
 
     return render_template('leaderboard.html', leaderboard=top_10_leaderboard)
+
+from werkzeug.security import generate_password_hash
+
+@bp.route('/admin/users/reset_password/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def reset_password(user_id):
+    user = User.query.get_or_404(user_id)
+
+    if request.method == 'POST':
+        new_password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
+
+        if new_password != confirm_password:
+            flash('Passwords do not match!', 'danger')
+            return redirect(url_for('main.reset_password', user_id=user.id))
+
+        user.set_password(new_password)  # Update the password
+        db.session.commit()
+
+        flash(f"Password for {user.username} has been updated.", 'success')
+        return redirect(url_for('main.admin_panel'))
+
+    return render_template('reset_password.html', user=user)
