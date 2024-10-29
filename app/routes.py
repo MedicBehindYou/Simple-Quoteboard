@@ -250,7 +250,7 @@ def vote(vote_type, quote_id):
 
 @bp.route('/leaderboard')
 def leaderboard():
-    names = ['nathan', 'rick', 'dean', 'anthony', 'brian', 'ryan', 'scott', 'kayla', 'eben', 'darren']
+    names = ['nathan', 'rick', 'dean', 'anthony', 'brian', 'ryan', 'scott', 'kayla', 'eben', 'darren', 'charles', 'shavela']
     
     leaderboard = {name: 0 for name in names}
     
