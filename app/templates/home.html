@@ -35,6 +35,24 @@
         <h1>Hammond's HR Nightmare Inducing Quoteboard</h1>
         
         {% if current_user.is_authenticated %}
+            {% if quote_of_the_day %}
+                <div id="quoteOfTheDay">
+                    <h2 style="text-align: center;">Quote of the Day</h2>
+                    <li class="quote-box">
+                        <div class="quote-content">{{ quote_of_the_day.content }}</div>
+                        <div class="quote-right">
+                            <div class="vote-section">
+                                <button class="vote-btn" id="upvote-btn-{{ quote_of_the_day.id }}" onclick="vote('upvote', {{ quote_of_the_day.id }})">👍</button>
+                                <span class="vote-count" id="vote-count-{{ quote_of_the_day.id }}">{{ quote_of_the_day.upvotes - quote_of_the_day.downvotes }}</span>
+                                <button class="vote-btn" id="downvote-btn-{{ quote_of_the_day.id }}" onclick="vote('downvote', {{ quote_of_the_day.id }})">👎</button>
+                            </div>
+                            <p class="quote-user">Submitted by: {{ quote_of_the_day.user.username }}</p>
+                            <p class="quote-attribution">- {{ quote_of_the_day.attribution }}</p>
+                        </div>
+                    </li>
+                </div>
+            {% endif %}
+
             <div class="sort-filter-controls">
                 <form id="sortFilterForm" method="GET" action="{{ url_for('main.home') }}">
                     <!-- Sort dropdown -->

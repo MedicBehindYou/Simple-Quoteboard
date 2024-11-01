@@ -1,0 +1,10 @@
+services:
+  quoteBoard:
+    image: 192.168.0.104:3000/quoteboard
+    container_name: quoteBoard
+    volumes:
+      - /mnt/user/Docker/devWork/quoteBoard/instance/:/qb/instance/:rw
+    ports:
+      - "5000:5000"
+    stdin_open: true
+    tty: true

@@ -29,6 +29,7 @@ class Quote(db.Model):
     downvotes = db.Column(db.Integer, default=0)
 
     user = db.relationship('User', backref='quotes')  # Relationship to fetch username
+    displayed_on = db.Column(db.Date, nullable=True, default=None)
 
 
 class Vote(db.Model):

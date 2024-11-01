@@ -6,6 +6,8 @@ from app.models import User, Quote, Vote
 from app.forms import RegistrationForm
 from functools import wraps
 from flask_socketio import emit
+from datetime import date
+import random
 
 
 bp = Blueprint('main', __name__)  # Create a blueprint
@@ -33,7 +35,22 @@ def home():
     quotes = quotes_query.all()
     user_count = User.query.count()
 
-    return render_template('home.html', quotes=quotes, user_count=user_count, sort_by=sort_by, attribution_filter=attribution_filter)
+    today = date.today()
+    daily_quote = Quote.query.filter_by(displayed_on=today).first()
+    if daily_quote:
+        quote_of_the_day = daily_quote
+    else:
+        unseen_quotes = Quote.query.filter((Quote.displayed_on != today) | (Quote.displayed_on == None)).all()
+    
+        if unseen_quotes:
+            daily_quote = random.choice(unseen_quotes)
+            daily_quote.displayed_on = today
+            db.session.commit()
+            quote_of_the_day = daily_quote
+        else:
+            quote_of_the_day = "No more quotes available!"
+
+    return render_template('home.html', quotes=quotes, user_count=user_count, sort_by=sort_by, attribution_filter=attribution_filter, quote_of_the_day=quote_of_the_day)
 
 
 @bp.route('/register', methods=['GET', 'POST'])
